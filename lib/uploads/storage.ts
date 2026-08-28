@@ -1,0 +1,131 @@
+import { randomBytes } from "crypto";
+import { connectMongo } from "@/lib/mongodb";
+import { StoredUpload, type UploadFolder } from "@/models/StoredUpload";
+import { buildUploadUrl, parseUploadUrl } from "@/lib/uploads/urls";
+
+export const IMAGE_MIME_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+] as const;
+
+export const DOCUMENT_MIME_TYPES = [
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/octet-stream",
+] as const;
+
+export const MAX_IMAGE_SIZE = 8 * 1024 * 1024;
+export const MAX_DOCUMENT_SIZE = 5 * 1024 * 1024;
+
+const MIME_EXTENSIONS: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/gif": "gif",
+  "application/pdf": "pdf",
+  "application/msword": "doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+};
+
+const EXTENSION_MIME: Record<string, string> = {
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  png: "image/png",
+  webp: "image/webp",
+  gif: "image/gif",
+  pdf: "application/pdf",
+  doc: "application/msword",
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+};
+
+export function getExtensionFromFile(file: File): string | null {
+  const fromMime = MIME_EXTENSIONS[file.type];
+  if (fromMime) return fromMime;
+
+  const match = file.name.toLowerCase().match(/\.([a-z0-9]+)$/);
+  return match?.[1] ?? null;
+}
+
+function isAllowedMime(file: File, ext: string, allowedMimeTypes: readonly string[]): boolean {
+  if (allowedMimeTypes.includes(file.type)) return true;
+
+  if (file.type === "application/octet-stream" || file.type === "") {
+    return ["pdf", "jpg", "jpeg", "png", "webp", "doc", "docx", "gif"].includes(ext);
+  }
+
+  return false;
+}
+
+export function generateUploadFilename(ext: string): string {
+  return `${Date.now()}-${randomBytes(8).toString("hex")}.${ext}`;
+}
+
+export async function saveUpload(params: {
+  folder: UploadFolder;
+  file: File;
+  allowedMimeTypes: readonly string[];
+  maxSize: number;
+}): Promise<{ url: string; filename: string; size: number; folder: UploadFolder }> {
+  const { folder, file, allowedMimeTypes, maxSize } = params;
+
+  if (file.size === 0) {
+    throw new Error("File is empty");
+  }
+
+  if (file.size > maxSize) {
+    throw new Error(`File exceeds the ${Math.round(maxSize / (1024 * 1024))} MB size limit`);
+  }
+
+  const ext = getExtensionFromFile(file);
+  if (!ext) {
+    throw new Error("Unsupported file type");
+  }
+
+  if (!isAllowedMime(file, ext, allowedMimeTypes)) {
+    throw new Error("Unsupported file type");
+  }
+
+  const filename = generateUploadFilename(ext);
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const mimeType = file.type || EXTENSION_MIME[ext] || "application/octet-stream";
+
+  await connectMongo();
+  await StoredUpload.create({
+    folder,
+    filename,
+    mimeType,
+    size: file.size,
+    data: buffer,
+  });
+
+  return {
+    url: buildUploadUrl(folder, filename),
+    filename,
+    size: file.size,
+    folder,
+  };
+}
+
+export async function deleteUploadByUrl(url: string): Promise<boolean> {
+  const parsed = parseUploadUrl(url);
+  if (!parsed) return false;
+
+  await connectMongo();
+  const result = await StoredUpload.deleteOne({
+    folder: parsed.folder,
+    filename: parsed.filename,
+  });
+
+  return result.deletedCount > 0;
+}
+
+export async function getStoredUpload(folder: UploadFolder, filename: string) {
+  await connectMongo();
+  return StoredUpload.findOne({ folder, filename }).lean();
+}

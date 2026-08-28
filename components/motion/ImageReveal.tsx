@@ -3,6 +3,7 @@
 import { motion, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { resolveImageUrl } from "@/lib/uploads/resolve";
 
 export function ImageReveal({
   src,
@@ -29,6 +30,8 @@ export function ImageReveal({
 }) {
   const reduced = useReducedMotion();
   const isSvg = src.endsWith(".svg");
+  const imageSrc = resolveImageUrl(src);
+  const useUnoptimized = imageSrc.startsWith("/api/uploads/");
   const objectFit = fit === "contain" || isSvg ? "contain" : "cover";
   const imageClass = cn(
     "block h-auto w-full max-w-full",
@@ -50,7 +53,7 @@ export function ImageReveal({
   if (reduced) {
     return (
       <div className={wrapperClass}>
-        <Image src={src} alt={alt} width={width} height={height} className={imageClass} priority={priority} sizes={sizes} />
+        <Image src={imageSrc} alt={alt} width={width} height={height} className={imageClass} priority={priority} sizes={sizes} unoptimized={useUnoptimized} />
       </div>
     );
   }
@@ -64,13 +67,14 @@ export function ImageReveal({
       transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
     >
       <Image
-        src={src}
+        src={imageSrc}
         alt={alt}
         width={width}
         height={height}
         className={imageClass}
         priority={priority}
         sizes={sizes}
+        unoptimized={useUnoptimized}
       />
     </motion.div>
   );

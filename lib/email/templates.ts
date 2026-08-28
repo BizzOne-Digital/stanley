@@ -111,8 +111,24 @@ export function quoteBusinessEmail(data: QuoteFormData, reference: string) {
   };
 }
 
-export function subcontractorBusinessEmail(data: SubcontractorFormData, attachments: string[]) {
-  const attachmentList = attachments.length > 0 ? attachments.join(", ") : "None";
+export function subcontractorBusinessEmail(
+  data: SubcontractorFormData,
+  documents: { label: string; url: string }[]
+) {
+  const documentList =
+    documents.length > 0
+      ? documents.map((doc) => `${doc.label}: ${doc.url}`).join("\n")
+      : "None";
+
+  const documentHtml =
+    documents.length > 0
+      ? documents
+          .map(
+            (doc) =>
+              `<li><a href="${escapeHtml(doc.url)}" style="color:#F4C64E;">${escapeHtml(doc.label)}</a></li>`
+          )
+          .join("")
+      : "—";
 
   const htmlBody = `<table width="100%" cellpadding="0" cellspacing="0">${[
     row("Name", data.fullName),
@@ -129,8 +145,9 @@ export function subcontractorBusinessEmail(data: SubcontractorFormData, attachme
     row("Customer Service Experience", data.customerServiceExperience || "—"),
     row("Why Good Fit", data.goodFit),
     row("Additional Info", data.additionalInfo || "—"),
-    row("Attachments", attachmentList),
-  ].join("")}</table>`;
+  ].join("")}</table>
+  <p style="color:#F4C64E;font-weight:700;margin:24px 0 8px;">Uploaded Documents</p>
+  <ul style="color:#F7F2E7;padding-left:20px;">${documentHtml}</ul>`;
 
   const text = [
     textRow("Name", data.fullName),
@@ -147,7 +164,7 @@ export function subcontractorBusinessEmail(data: SubcontractorFormData, attachme
     textRow("Customer Service Experience", data.customerServiceExperience || "—"),
     textRow("Why Good Fit", data.goodFit),
     textRow("Additional Info", data.additionalInfo || "—"),
-    textRow("Attachments", attachmentList),
+    textRow("Documents", documentList),
   ].join("");
 
   return {

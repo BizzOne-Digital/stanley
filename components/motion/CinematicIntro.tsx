@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { siteConfig } from "@/data/site";
 import { cn } from "@/lib/utils";
 
@@ -11,25 +11,31 @@ const INTRO_DURATION_MS = 3800;
 
 type IntroPhase = "pending" | "intro" | "ready";
 
+function getInitialPhase(): IntroPhase {
+  if (typeof window === "undefined") return "pending";
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return "ready";
+
+  try {
+    if (sessionStorage.getItem(SESSION_KEY) === "true") return "ready";
+  } catch {
+    /* sessionStorage unavailable */
+  }
+
+  return "intro";
+}
+
 export function IntroGate({ children }: { children: ReactNode }) {
-  const reducedMotion = useReducedMotion();
-  const [phase, setPhase] = useState<IntroPhase>("pending");
+  const [phase, setPhase] = useState<IntroPhase>(getInitialPhase);
 
   useEffect(() => {
-    if (reducedMotion) {
-      setPhase("ready");
-      return;
-    }
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = (event: MediaQueryListEvent) => {
+      if (event.matches) setPhase("ready");
+    };
 
-    let alreadySeen = false;
-    try {
-      alreadySeen = sessionStorage.getItem(SESSION_KEY) === "true";
-    } catch {
-      alreadySeen = false;
-    }
-
-    setPhase(alreadySeen ? "ready" : "intro");
-  }, [reducedMotion]);
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
 
   const completeIntro = useCallback(() => {
     try {
@@ -78,16 +84,31 @@ export function IntroGate({ children }: { children: ReactNode }) {
   );
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(max-width: 768px)").matches;
+  });
+
+  useEffect(() => {
+    const media = window.matchMedia("(max-width: 768px)");
+    const onChange = (event: MediaQueryListEvent) => {
+      setIsMobile(event.matches);
+    };
+
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
+
+  return isMobile;
+}
+
 function CinematicIntroOverlay({ onComplete }: { onComplete: () => void }) {
   const [visible, setVisible] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
 
   const dismiss = useCallback(() => {
     setVisible(false);
-  }, []);
-
-  useEffect(() => {
-    setIsMobile(window.matchMedia("(max-width: 768px)").matches);
   }, []);
 
   useEffect(() => {

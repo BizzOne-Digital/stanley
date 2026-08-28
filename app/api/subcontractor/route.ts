@@ -11,48 +11,88 @@ import {
   subcontractorAcknowledgementEmail,
 } from "@/lib/email/templates";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+import { isMongoConfigured } from "@/lib/mongodb";
+import {
+  DOCUMENT_MIME_TYPES,
+  MAX_DOCUMENT_SIZE,
+  saveUpload,
+} from "@/lib/uploads/storage";
+import { siteConfig } from "@/data/site";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
 const FILE_FIELDS = [
-  { key: "driversLicense", label: "drivers-license", required: true },
-  { key: "proofOfInsurance", label: "proof-of-insurance", required: true },
-  { key: "resume", label: "resume", required: false },
+  { key: "driversLicense", label: "Driver's License", required: true },
+  { key: "proofOfInsurance", label: "Proof of Insurance", required: true },
+  { key: "resume", label: "Resume", required: false },
 ] as const;
 
-async function parseFile(
-  formData: FormData,
-  key: string,
-  required: boolean
-): Promise<{ attachment?: Attachment; error?: string }> {
-  const file = formData.get(key);
+type StoredDocument = { label: string; url: string };
 
-  if (!file || !(file instanceof File) || file.size === 0) {
-    if (required) {
-      return { error: `Missing required file: ${key}` };
-    }
-    return {};
-  }
-
-  if (file.size > MAX_FILE_SIZE) {
-    return { error: `${file.name} exceeds the 5 MB size limit` };
-  }
-
+async function processUploadedFile(
+  file: File,
+  label: string
+): Promise<{ document?: StoredDocument; attachment?: Attachment; error?: string }> {
   if (!isAllowedUpload(file)) {
     return {
       error: `${file.name} has an unsupported file type. Please upload PDF, JPG, PNG, or DOC.`,
     };
   }
 
+  if (file.size > MAX_FILE_SIZE) {
+    return { error: `${file.name} exceeds the 5 MB size limit` };
+  }
+
   const buffer = Buffer.from(await file.arrayBuffer());
+
+  if (isMongoConfigured()) {
+    try {
+      const saved = await saveUpload({
+        folder: "misc",
+        file,
+        allowedMimeTypes: DOCUMENT_MIME_TYPES,
+        maxSize: MAX_DOCUMENT_SIZE,
+      });
+
+      return {
+        document: {
+          label,
+          url: `${siteConfig.url}${saved.url}`,
+        },
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to store file";
+      return { error: message };
+    }
+  }
+
   return {
+    document: { label, url: file.name },
     attachment: {
       filename: file.name,
       content: buffer,
       contentType: file.type || undefined,
     },
   };
+}
+
+async function parseFile(
+  formData: FormData,
+  key: string,
+  label: string,
+  required: boolean
+): Promise<{ document?: StoredDocument; attachment?: Attachment; error?: string }> {
+  const file = formData.get(key);
+
+  if (!file || !(file instanceof File) || file.size === 0) {
+    if (required) {
+      return { error: `Missing required file: ${label}` };
+    }
+    return {};
+  }
+
+  return processUploadedFile(file, label);
 }
 
 function parseConsent(value: FormDataEntryValue | null): boolean {
@@ -113,27 +153,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true });
     }
 
+    const documents: StoredDocument[] = [];
     const attachments: Attachment[] = [];
-    const attachmentNames: string[] = [];
 
     for (const field of FILE_FIELDS) {
-      const result = await parseFile(formData, field.key, field.required);
+      const result = await parseFile(formData, field.key, field.label, field.required);
       if (result.error) {
         return NextResponse.json({ error: result.error }, { status: 400 });
       }
+      if (result.document) {
+        documents.push(result.document);
+      }
       if (result.attachment) {
         attachments.push(result.attachment);
-        const name =
-          typeof result.attachment.filename === "string"
-            ? result.attachment.filename
-            : field.label;
-        attachmentNames.push(name);
       }
     }
 
     const config = getSmtpConfig();
     const transporter = getTransporter();
-    const businessEmail = subcontractorBusinessEmail(data, attachmentNames);
+    const businessEmail = subcontractorBusinessEmail(data, documents);
     const ackEmail = subcontractorAcknowledgementEmail(data.fullName);
 
     await transporter.sendMail({
@@ -143,7 +181,7 @@ export async function POST(request: Request) {
       subject: businessEmail.subject,
       html: businessEmail.html,
       text: businessEmail.text,
-      attachments,
+      attachments: attachments.length > 0 ? attachments : undefined,
     });
 
     try {
