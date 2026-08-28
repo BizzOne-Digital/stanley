@@ -67,9 +67,12 @@ export function SubcontractorForm({ className }: { className?: string }) {
     try {
       const formData = new FormData();
       Object.entries(data).forEach(([key, value]) => {
-        if (key !== "website" && value !== undefined) {
-          formData.append(key, String(value));
+        if (key === "website" || value === undefined) return;
+        if (key === "consent") {
+          formData.append(key, value ? "true" : "false");
+          return;
         }
+        formData.append(key, String(value));
       });
       formData.append("website", data.website ?? "");
       if (driversLicense) formData.append("driversLicense", driversLicense);

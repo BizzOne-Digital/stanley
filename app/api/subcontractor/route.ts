@@ -3,7 +3,7 @@ import type { Attachment } from "nodemailer/lib/mailer";
 import {
   subcontractorFormSchema,
   MAX_FILE_SIZE,
-  ALLOWED_FILE_TYPES,
+  isAllowedUpload,
 } from "@/lib/validation/subcontractor";
 import { getTransporter, getSmtpConfig, isSmtpConfigured } from "@/lib/email/transporter";
 import {
@@ -11,6 +11,9 @@ import {
   subcontractorAcknowledgementEmail,
 } from "@/lib/email/templates";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
+
+export const runtime = "nodejs";
+export const maxDuration = 60;
 
 const FILE_FIELDS = [
   { key: "driversLicense", label: "drivers-license", required: true },
@@ -36,7 +39,7 @@ async function parseFile(
     return { error: `${file.name} exceeds the 5 MB size limit` };
   }
 
-  if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+  if (!isAllowedUpload(file)) {
     return {
       error: `${file.name} has an unsupported file type. Please upload PDF, JPG, PNG, or DOC.`,
     };
@@ -47,9 +50,14 @@ async function parseFile(
     attachment: {
       filename: file.name,
       content: buffer,
-      contentType: file.type,
+      contentType: file.type || undefined,
     },
   };
+}
+
+function parseConsent(value: FormDataEntryValue | null): boolean {
+  const normalized = String(value ?? "").toLowerCase();
+  return normalized === "true" || normalized === "on" || normalized === "1";
 }
 
 export async function POST(request: Request) {
@@ -87,7 +95,7 @@ export async function POST(request: Request) {
       customerServiceExperience: String(formData.get("customerServiceExperience") ?? ""),
       goodFit: String(formData.get("goodFit") ?? ""),
       additionalInfo: String(formData.get("additionalInfo") ?? ""),
-      consent: formData.get("consent") === "true",
+      consent: parseConsent(formData.get("consent")),
       website: String(formData.get("website") ?? ""),
     };
 
@@ -138,19 +146,27 @@ export async function POST(request: Request) {
       attachments,
     });
 
-    await transporter.sendMail({
-      from: `"${config.fromName}" <${config.fromEmail}>`,
-      to: data.email,
-      subject: ackEmail.subject,
-      html: ackEmail.html,
-      text: ackEmail.text,
-    });
+    try {
+      await transporter.sendMail({
+        from: `"${config.fromName}" <${config.fromEmail}>`,
+        to: data.email,
+        subject: ackEmail.subject,
+        html: ackEmail.html,
+        text: ackEmail.text,
+      });
+    } catch (ackError) {
+      console.error("Subcontractor acknowledgement email failed:", ackError);
+    }
 
     return NextResponse.json({ success: true });
-  } catch {
-    return NextResponse.json(
-      { error: "Unable to submit your application at this time. Please call 504-915-4433." },
-      { status: 500 }
-    );
+  } catch (error) {
+    console.error("Subcontractor submission error:", error);
+
+    const message =
+      error instanceof Error && /auth|credentials|invalid login/i.test(error.message)
+        ? "Email service authentication failed. Please call 504-915-4433."
+        : "Unable to submit your application at this time. Please call 504-915-4433.";
+
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

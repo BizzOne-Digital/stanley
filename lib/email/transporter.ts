@@ -33,10 +33,13 @@ export function getTransporter(): Transporter {
     host: config.host,
     port: config.port,
     secure: config.secure,
+    requireTLS: !config.secure && config.port === 587,
     auth: { user: config.user, pass: config.pass },
-    connectionTimeout: 10000,
-    greetingTimeout: 10000,
-    socketTimeout: 15000,
+    pool: true,
+    maxConnections: 2,
+    connectionTimeout: 20000,
+    greetingTimeout: 20000,
+    socketTimeout: 30000,
   });
 
   return transporter;

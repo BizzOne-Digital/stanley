@@ -29,6 +29,7 @@ export const subcontractorFormSchema = z.object({
 export type SubcontractorFormData = z.infer<typeof subcontractorFormSchema>;
 
 export const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
+
 export const ALLOWED_FILE_TYPES = [
   "application/pdf",
   "image/jpeg",
@@ -36,4 +37,16 @@ export const ALLOWED_FILE_TYPES = [
   "image/webp",
   "application/msword",
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-];
+  "application/octet-stream",
+] as const;
+
+const ALLOWED_EXTENSIONS = [".pdf", ".jpg", ".jpeg", ".png", ".webp", ".doc", ".docx"];
+
+export function isAllowedUpload(file: File): boolean {
+  if (ALLOWED_FILE_TYPES.includes(file.type as (typeof ALLOWED_FILE_TYPES)[number])) {
+    return true;
+  }
+
+  const extension = file.name.toLowerCase().match(/\.[^.]+$/)?.[0] ?? "";
+  return ALLOWED_EXTENSIONS.includes(extension);
+}
