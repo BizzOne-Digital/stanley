@@ -1,10 +1,10 @@
 export const subcontractorContent = {
   hero: {
     eyebrow: "Join the Team",
-    title: "Drive With Conley Logistics",
+    title: "Drive With Conley Delivery Solutions",
     tagline: "Drive with purpose. Deliver with professionalism.",
     intro:
-      "Conley Logistics is looking for dependable, professional drivers to join our growing delivery team. If you're reliable, customer-focused, and take pride in getting packages where they need to go safely and on time, we'd like to hear from you.",
+      "Conley Delivery Solutions is looking for dependable, professional drivers to join our growing delivery team. If you're reliable, customer-focused, and take pride in getting packages where they need to go safely and on time, we'd like to hear from you.",
   },
   position: {
     title: "Independent Delivery Driver",
@@ -45,6 +45,6 @@ export const subcontractorContent = {
   growth: {
     title: "Room to Grow",
     description:
-      "As Conley Logistics expands, so can the opportunities available to our drivers.",
+      "As Conley Delivery Solutions expands, so can the opportunities available to our drivers.",
   },
 } as const;

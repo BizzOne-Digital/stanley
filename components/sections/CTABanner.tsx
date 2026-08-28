@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button";
 
 export function CTABanner({
   title = "Ready to schedule your delivery?",
-  description = "Contact Conley Logistics LLC for a custom quote or call us directly.",
+  description = `Contact ${siteConfig.name} for a custom quote or call us directly.`,
   showQuote = true,
 }: {
   title?: string;

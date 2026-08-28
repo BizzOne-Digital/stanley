@@ -11,7 +11,7 @@ import { QuoteForm } from "@/components/forms/QuoteForm";
 import { LogoLockup } from "@/components/layout/LogoLockup";
 
 export const metadata = createPageMetadata({
-  title: "Request a Quote | Conley Logistics LLC",
+  title: `Request a Quote | ${siteConfig.name}`,
   description:
     "Request a custom courier quote for same-day, rush, scheduled, or recurring delivery throughout New Orleans.",
   path: "/request-a-quote",

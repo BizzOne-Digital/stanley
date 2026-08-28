@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/Button";
 import { LogoLockup } from "@/components/layout/LogoLockup";
 
 export const metadata = createPageMetadata({
-  title: "Page Not Found | Conley Logistics LLC",
-  description: "The page you are looking for could not be found. Return to Conley Logistics LLC homepage or request a courier quote.",
+  title: `Page Not Found | ${siteConfig.name}`,
+  description: `The page you are looking for could not be found. Return to ${siteConfig.name} homepage or request a courier quote.`,
   path: "/404",
   noIndex: true,
 });

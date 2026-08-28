@@ -1,4 +1,5 @@
 import { escapeHtml, nl2br } from "./escape";
+import { siteConfig } from "@/data/site";
 import type { ContactFormData } from "@/lib/validation/contact";
 import type { QuoteFormData } from "@/lib/validation/quote";
 import type { SubcontractorFormData } from "@/lib/validation/subcontractor";
@@ -23,7 +24,7 @@ const emailWrapper = (title: string, body: string) => `
         </td></tr>
         <tr><td style="padding:24px;">${body}</td></tr>
         <tr><td style="padding:16px 24px;border-top:1px solid #1A1A1A;color:#A8A8A8;font-size:12px;">
-          Conley Logistics LLC — New Orleans Courier Service
+          ${escapeHtml(siteConfig.name)} — New Orleans Courier Service
         </td></tr>
       </table>
     </td></tr>
@@ -177,15 +178,15 @@ export function subcontractorBusinessEmail(
 export function subcontractorAcknowledgementEmail(name: string) {
   const htmlBody = `
     <p style="color:#F7F2E7;line-height:1.6;">Dear ${escapeHtml(name)},</p>
-    <p style="color:#F7F2E7;line-height:1.6;">Thank you for applying to drive with Conley Logistics LLC. We have received your application and will review it shortly.</p>
+    <p style="color:#F7F2E7;line-height:1.6;">Thank you for applying to drive with ${escapeHtml(siteConfig.name)}. We have received your application and will review it shortly.</p>
     <p style="color:#F7F2E7;line-height:1.6;">If your qualifications match our current needs, we will contact you to discuss next steps.</p>
     <p style="color:#F7F2E7;line-height:1.6;">If you have questions in the meantime, please call us at <a href="tel:+15049154433" style="color:#F4C64E;">504-915-4433</a>.</p>
-    <p style="color:#F7F2E7;line-height:1.6;">— Conley Logistics LLC</p>`;
+    <p style="color:#F7F2E7;line-height:1.6;">— ${escapeHtml(siteConfig.name)}</p>`;
 
-  const text = `Dear ${name},\n\nThank you for applying to drive with Conley Logistics LLC. We have received your application and will review it shortly.\n\nIf your qualifications match our current needs, we will contact you to discuss next steps.\n\nIf you have questions in the meantime, please call us at 504-915-4433.\n\n— Conley Logistics LLC`;
+  const text = `Dear ${name},\n\nThank you for applying to drive with ${siteConfig.name}. We have received your application and will review it shortly.\n\nIf your qualifications match our current needs, we will contact you to discuss next steps.\n\nIf you have questions in the meantime, please call us at 504-915-4433.\n\n— ${siteConfig.name}`;
 
   return {
-    subject: "Conley Logistics LLC — Application Received",
+    subject: `${siteConfig.name} — Application Received`,
     html: emailWrapper("Application Received", htmlBody),
     text,
   };
@@ -199,15 +200,15 @@ export function customerAcknowledgementEmail(name: string, reference?: string) {
 
   const htmlBody = `${refLine}
     <p style="color:#F7F2E7;line-height:1.6;">Dear ${escapeHtml(name)},</p>
-    <p style="color:#F7F2E7;line-height:1.6;">Thank you for contacting Conley Logistics LLC. We have received your request and will review the details shortly.</p>
+    <p style="color:#F7F2E7;line-height:1.6;">Thank you for contacting ${escapeHtml(siteConfig.name)}. We have received your request and will review the details shortly.</p>
     <p style="color:#F7F2E7;line-height:1.6;">This is not a confirmed delivery. We will follow up to confirm availability, acceptance, and final pricing.</p>
     <p style="color:#F7F2E7;line-height:1.6;">If you have an urgent need, please call us at <a href="tel:+15049154433" style="color:#F4C64E;">504-915-4433</a>.</p>
-    <p style="color:#F7F2E7;line-height:1.6;">— Conley Logistics LLC</p>`;
+    <p style="color:#F7F2E7;line-height:1.6;">— ${escapeHtml(siteConfig.name)}</p>`;
 
-  const text = `${refText}Dear ${name},\n\nThank you for contacting Conley Logistics LLC. We have received your request and will review the details shortly.\n\nThis is not a confirmed delivery. We will follow up to confirm availability, acceptance, and final pricing.\n\nIf you have an urgent need, please call us at 504-915-4433.\n\n— Conley Logistics LLC`;
+  const text = `${refText}Dear ${name},\n\nThank you for contacting ${siteConfig.name}. We have received your request and will review the details shortly.\n\nThis is not a confirmed delivery. We will follow up to confirm availability, acceptance, and final pricing.\n\nIf you have an urgent need, please call us at 504-915-4433.\n\n— ${siteConfig.name}`;
 
   return {
-    subject: "Conley Logistics LLC — Request Received",
+    subject: `${siteConfig.name} — Request Received`,
     html: emailWrapper("Request Received", htmlBody),
     text,
   };

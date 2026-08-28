@@ -349,7 +349,7 @@ export function SubcontractorForm({ className }: { className?: string }) {
 
       <FormSection title="Final Questions">
         <Field
-          label="Why would you be a good fit for Conley Logistics?"
+          label={`Why would you be a good fit for ${siteConfig.shortName}?`}
           required
           error={errors.goodFit?.message}
         >

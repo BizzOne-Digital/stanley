@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/Button";
 import { ServicesFilterGrid } from "./services-filter-grid";
 
 export const metadata = createPageMetadata({
-  title: "Courier Services in New Orleans | Conley Logistics LLC",
+  title: `Courier Services in New Orleans | ${siteConfig.name}`,
   description:
     "Same-day, rush, scheduled, medical-office, legal, business, and recurring courier services throughout New Orleans.",
   path: "/services",

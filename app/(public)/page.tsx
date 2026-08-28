@@ -167,7 +167,7 @@ export default function HomePage() {
               <SectionHeading
                 eyebrow="Built for New Orleans"
                 title="Local Courier Service You Can Count On"
-                description="Conley Logistics LLC is built around the rhythms of New Orleans — flexible delivery options, clear communication, and quote-based pricing for every route."
+                description={`${siteConfig.name} is built around the rhythms of New Orleans — flexible delivery options, clear communication, and quote-based pricing for every route.`}
               />
               <ul className="mt-8 grid gap-4 sm:grid-cols-2">
                 {newOrleansValues.map(({ title, description, icon: Icon }) => (

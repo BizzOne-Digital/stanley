@@ -1,15 +1,15 @@
 import type { BusinessHours, NavItem } from "@/types";
 
 export const siteConfig = {
-  name: "Conley Logistics LLC",
-  shortName: "Conley Logistics",
+  name: "Conley Delivery Solutions",
+  shortName: "Conley Delivery Solutions",
   tagline: "RELIABLE DELIVERY. EVERY ROUTE. EVERY TIME.",
   headline: "FAST, RELIABLE DELIVERY.",
   headlineSecondary: "RIGHT WHEN YOU NEED IT.",
   description:
     "Professional same-day, scheduled, medical, legal, and business courier services throughout New Orleans.",
   about:
-    "Conley Logistics LLC provides same-day, rush, scheduled, medical, business, and personal courier services throughout New Orleans. We help healthcare facilities, professional offices, local businesses, and individuals move time-sensitive items with clear communication and dependable service.",
+    "Conley Delivery Solutions provides same-day, rush, scheduled, medical, business, and personal courier services throughout New Orleans. We help healthcare facilities, professional offices, local businesses, and individuals move time-sensitive items with clear communication and dependable service.",
   mission:
     "To provide responsive, professional courier support that helps New Orleans businesses and individuals move important items without unnecessary delays or confusion.",
   email: "sconley9922@yahoo.com",
@@ -22,7 +22,7 @@ export const siteConfig = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   logo: {
     src: "/brand/conley-logistics-logo.png",
-    alt: "Conley Logistics LLC — Reliable delivery. Every route. Every time.",
+    alt: "Conley Delivery Solutions — Reliable delivery. Every route. Every time.",
     width: 800,
     height: 800,
   },
@@ -57,7 +57,7 @@ export const legalNotices = {
   hazardousRestriction:
     "Do not use this form to request transport of hazardous, illegal, prohibited, or unapproved materials.",
   quoteDisclaimer:
-    "This submission is a quote request, not a confirmed delivery. Conley Logistics LLC will review the details and confirm availability, acceptance, and final pricing.",
+    "This submission is a quote request, not a confirmed delivery. Conley Delivery Solutions will review the details and confirm availability, acceptance, and final pricing.",
   medicalReview:
     "Healthcare-related delivery inquiries are reviewed before acceptance. Please describe any handling, privacy, timing, or temperature requirements when requesting a quote.",
   acceptanceNotice:

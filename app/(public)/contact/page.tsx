@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/Button";
 import { LogoLockup } from "@/components/layout/LogoLockup";
 
 export const metadata = createPageMetadata({
-  title: "Contact Conley Logistics LLC | New Orleans Courier",
+  title: `Contact ${siteConfig.name} | New Orleans Courier`,
   description: `Contact ${siteConfig.name} for same-day and scheduled courier service in New Orleans. Call ${siteConfig.phoneDisplay} or email ${siteConfig.email}.`,
   path: "/contact",
 });

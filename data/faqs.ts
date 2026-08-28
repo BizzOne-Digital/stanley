@@ -5,7 +5,7 @@ export const faqs: FAQ[] = [
   {
     id: "service-area",
     question: "What areas do you serve?",
-    answer: `Conley Logistics LLC serves ${"New Orleans, Louisiana and surrounding local areas"}. Specific routes to surrounding areas are confirmed when you request a quote.`,
+    answer: `Conley Delivery Solutions serves ${"New Orleans, Louisiana and surrounding local areas"}. Specific routes to surrounding areas are confirmed when you request a quote.`,
     category: "general",
   },
   {

@@ -72,7 +72,7 @@ export function LogoLockup({
             textClassName,
           )}
         >
-          Conley Logistics LLC
+          {siteConfig.name}
         </span>
       ) : null}
     </Link>

@@ -38,7 +38,7 @@ const config = {
   pass: env.SMTP_PASS,
   fromEmail: env.SMTP_FROM_EMAIL,
   toEmail: env.CONTACT_TO_EMAIL,
-  fromName: env.SMTP_FROM_NAME ?? "Conley Logistics LLC",
+  fromName: env.SMTP_FROM_NAME ?? "Conley Delivery Solutions",
 };
 
 console.log("SMTP Test Configuration:");
@@ -81,9 +81,9 @@ try {
   const info = await transporter.sendMail({
     from: `"${config.fromName}" <${config.fromEmail}>`,
     to: config.toEmail,
-    subject: "Conley Logistics — SMTP Test Successful",
-    text: "This is a test email confirming SMTP is configured correctly for the Conley Logistics website.",
-    html: `<p>This is a test email confirming SMTP is configured correctly for the <strong>Conley Logistics</strong> website.</p><p>Sent at: ${new Date().toISOString()}</p>`,
+    subject: "Conley Delivery Solutions — SMTP Test Successful",
+    text: "This is a test email confirming SMTP is configured correctly for the Conley Delivery Solutions website.",
+    html: `<p>This is a test email confirming SMTP is configured correctly for the <strong>Conley Delivery Solutions</strong> website.</p><p>Sent at: ${new Date().toISOString()}</p>`,
   });
   console.log(`  OK — Test email sent (messageId: ${info.messageId})`);
 } catch (err) {

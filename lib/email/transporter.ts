@@ -18,7 +18,7 @@ export function getSmtpConfig() {
     secure,
     user: process.env.SMTP_USER?.trim(),
     pass: cleanSecret(process.env.SMTP_PASS),
-    fromName: process.env.SMTP_FROM_NAME?.trim() ?? "Conley Logistics LLC",
+    fromName: process.env.SMTP_FROM_NAME?.trim() ?? "Conley Delivery Solutions",
     fromEmail: process.env.SMTP_FROM_EMAIL?.trim(),
     contactTo: process.env.CONTACT_TO_EMAIL?.trim() ?? "sconley9922@yahoo.com",
   };

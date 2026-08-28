@@ -15,7 +15,7 @@ import { CTABanner } from "@/components/sections/CTABanner";
 import { Button } from "@/components/ui/Button";
 
 export const metadata = createPageMetadata({
-  title: "About Conley Logistics LLC | New Orleans Courier",
+  title: `About ${siteConfig.name} | New Orleans Courier`,
   description: siteConfig.about,
   path: "/about",
 });
@@ -58,7 +58,7 @@ export default function AboutPage() {
       <JsonLd data={breadcrumbs} />
 
       <PageHero
-        title="About Conley Logistics LLC"
+        title={`About ${siteConfig.name}`}
         eyebrow="New Orleans Courier Service"
         description={siteConfig.about}
         breadcrumbs={[{ label: "About" }]}
@@ -149,7 +149,7 @@ export default function AboutPage() {
               <SectionHeading
                 eyebrow="New Orleans Focus"
                 title="Built Around Local Routes"
-                description={`Conley Logistics LLC operates throughout ${siteConfig.serviceAreaShort}. We understand that local knowledge, flexible timing, and clear communication matter as much as speed.`}
+                description={`${siteConfig.name} operates throughout ${siteConfig.serviceAreaShort}. We understand that local knowledge, flexible timing, and clear communication matter as much as speed.`}
               />
               <p className="mt-4 text-sm text-muted">
                 Service to surrounding areas is subject to confirmation based on route and
@@ -200,7 +200,7 @@ export default function AboutPage() {
       <AnimatedSection variant="fadeUp" className="py-16 md:py-24">
         <div className="mx-auto max-w-5xl px-4 lg:px-8">
           <CTABanner
-            title="Partner With Conley Logistics"
+            title={`Partner With ${siteConfig.shortName}`}
             description="Request a quote or call to discuss your delivery needs throughout New Orleans."
           />
         </div>

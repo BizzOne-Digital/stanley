@@ -10,7 +10,7 @@ export const services: Service[] = [
     description:
       "Local same-day courier service for time-sensitive pickups and deliveries across New Orleans.",
     overview:
-      "When something needs to move today, Conley Logistics LLC provides same-day courier support throughout New Orleans. We coordinate pickup timing, route details, and delivery expectations so you know what to expect before the run begins.",
+      "When something needs to move today, Conley Delivery Solutions provides same-day courier support throughout New Orleans. We coordinate pickup timing, route details, and delivery expectations so you know what to expect before the run begins.",
     customerTypes: [
       "Medical offices",
       "Law firms",
@@ -38,7 +38,7 @@ export const services: Service[] = [
     ],
     disclaimer:
       "Same-day availability depends on current schedule, route, and item requirements. Acceptance is subject to service capability and confirmation.",
-    seoTitle: "Same-Day Delivery in New Orleans | Conley Logistics LLC",
+    seoTitle: "Same-Day Delivery in New Orleans | Conley Delivery Solutions",
     seoDescription:
       "Same-day courier and local delivery service in New Orleans. Request a quote for time-sensitive pickups and deliveries.",
     image: images.localPickup.src,
@@ -79,7 +79,7 @@ export const services: Service[] = [
     ],
     disclaimer:
       "Rush service availability varies by time of day and current schedule. We do not guarantee specific delivery times until confirmed.",
-    seoTitle: "Rush Courier Service New Orleans | Conley Logistics LLC",
+    seoTitle: "Rush Courier Service New Orleans | Conley Delivery Solutions",
     seoDescription:
       "Rush and expedited local courier service in New Orleans. Priority delivery when timing is critical.",
     image: images.heroVan.src,
@@ -121,7 +121,7 @@ export const services: Service[] = [
     ],
     disclaimer:
       "Scheduled service is confirmed after reviewing route, timing, and item requirements. Changes may affect pricing.",
-    seoTitle: "Scheduled Local Delivery New Orleans | Conley Logistics LLC",
+    seoTitle: "Scheduled Local Delivery New Orleans | Conley Delivery Solutions",
     seoDescription:
       "Scheduled courier and delivery service in New Orleans. Plan pickups and deliveries around your schedule.",
     image: images.processFlow.src,
@@ -135,7 +135,7 @@ export const services: Service[] = [
     description:
       "Medical-office courier support for healthcare-related local delivery inquiries throughout New Orleans.",
     overview:
-      "Conley Logistics LLC provides medical-office courier support for healthcare facilities, medical offices, pharmacies, and laboratories that need local pickup and delivery coordination. Healthcare-related delivery inquiries are reviewed before acceptance to ensure we can meet the specific requirements of each request.",
+      "Conley Delivery Solutions provides medical-office courier support for healthcare facilities, medical offices, pharmacies, and laboratories that need local pickup and delivery coordination. Healthcare-related delivery inquiries are reviewed before acceptance to ensure we can meet the specific requirements of each request.",
     customerTypes: [
       "Medical offices",
       "Healthcare facilities",
@@ -162,7 +162,7 @@ export const services: Service[] = [
     ],
     disclaimer:
       "Healthcare-related delivery inquiries are reviewed before acceptance. Do not submit protected health information through our public forms. Acceptance is subject to service capability and confirmation.",
-    seoTitle: "Medical Office Courier New Orleans | Conley Logistics LLC",
+    seoTitle: "Medical Office Courier New Orleans | Conley Delivery Solutions",
     seoDescription:
       "Medical-office courier support in New Orleans. Healthcare-related delivery inquiries reviewed before acceptance.",
     image: images.medicalOffice.src,
@@ -176,7 +176,7 @@ export const services: Service[] = [
     description:
       "Local courier service for law firms and professional offices moving legal documents and related materials.",
     overview:
-      "Law firms and professional offices rely on timely document movement. Conley Logistics LLC provides local courier support for legal document delivery between offices, courthouses, and business locations throughout the New Orleans area.",
+      "Law firms and professional offices rely on timely document movement. Conley Delivery Solutions provides local courier support for legal document delivery between offices, courthouses, and business locations throughout the New Orleans area.",
     customerTypes: ["Law firms", "Professional offices", "Small businesses"],
     useCases: [
       "Document delivery between law offices",
@@ -198,7 +198,7 @@ export const services: Service[] = [
     ],
     disclaimer:
       "This service covers local courier delivery. We do not provide process serving, legal filing authority, notarization, or certified chain-of-custody services unless separately confirmed.",
-    seoTitle: "Legal Document Courier New Orleans | Conley Logistics LLC",
+    seoTitle: "Legal Document Courier New Orleans | Conley Delivery Solutions",
     seoDescription:
       "Legal document delivery and courier service for law firms in New Orleans. Request a quote for local document runs.",
     image: images.legalDocuments.src,
@@ -212,7 +212,7 @@ export const services: Service[] = [
     description:
       "Courier service connecting local businesses with dependable pickup and delivery between locations.",
     overview:
-      "Business-to-business delivery keeps your operations moving. From inter-office transfers to supplier runs and client deliveries, Conley Logistics LLC provides local courier support tailored to your business workflow.",
+      "Business-to-business delivery keeps your operations moving. From inter-office transfers to supplier runs and client deliveries, Conley Delivery Solutions provides local courier support tailored to your business workflow.",
     customerTypes: [
       "Small businesses",
       "Auto dealerships",
@@ -239,7 +239,7 @@ export const services: Service[] = [
     ],
     disclaimer:
       "Business delivery pricing varies by route, frequency, and item requirements. Final pricing confirmed after review.",
-    seoTitle: "Business Courier Service New Orleans | Conley Logistics LLC",
+    seoTitle: "Business Courier Service New Orleans | Conley Delivery Solutions",
     seoDescription:
       "Business-to-business courier and local delivery in New Orleans. Dependable pickup and delivery between locations.",
     image: images.businessDelivery.src,
@@ -280,7 +280,7 @@ export const services: Service[] = [
     ],
     disclaimer:
       "On-demand availability depends on current schedule. Acceptance is subject to service capability and confirmation.",
-    seoTitle: "On-Demand Courier New Orleans | Conley Logistics LLC",
+    seoTitle: "On-Demand Courier New Orleans | Conley Delivery Solutions",
     seoDescription:
       "On-demand local courier service in New Orleans. Flexible pickup and delivery without a standing contract.",
     image: images.heroVan.src,
@@ -321,7 +321,7 @@ export const services: Service[] = [
     ],
     disclaimer:
       "Recurring route pricing depends on frequency, number of stops, distance, and item requirements. Route changes may affect pricing.",
-    seoTitle: "Recurring Delivery Routes New Orleans | Conley Logistics LLC",
+    seoTitle: "Recurring Delivery Routes New Orleans | Conley Delivery Solutions",
     seoDescription:
       "Recurring courier routes and scheduled business delivery in New Orleans. Consistent local delivery support.",
     image: images.recurringRoutes.src,
@@ -362,7 +362,7 @@ export const services: Service[] = [
     ],
     disclaimer:
       "Service to surrounding areas is subject to confirmation based on route and availability.",
-    seoTitle: "Local Pickup & Delivery New Orleans | Conley Logistics LLC",
+    seoTitle: "Local Pickup & Delivery New Orleans | Conley Delivery Solutions",
     seoDescription:
       "Local pickup and delivery courier service in New Orleans. Simple, dependable item transport.",
     image: images.localPickup.src,
@@ -403,7 +403,7 @@ export const services: Service[] = [
     ],
     disclaimer:
       "After-hours and emergency delivery requests are subject to confirmation and availability. Sunday service is closed unless emergency availability is explicitly confirmed.",
-    seoTitle: "After-Hours Courier New Orleans | Conley Logistics LLC",
+    seoTitle: "After-Hours Courier New Orleans | Conley Delivery Solutions",
     seoDescription:
       "After-hours and emergency local courier requests in New Orleans. Availability subject to confirmation.",
     image: images.afterHours.src,

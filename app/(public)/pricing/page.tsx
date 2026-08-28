@@ -19,7 +19,7 @@ import { CTABanner } from "@/components/sections/CTABanner";
 import { Button } from "@/components/ui/Button";
 
 export const metadata = createPageMetadata({
-  title: "Pricing | Conley Logistics LLC New Orleans Courier",
+  title: `Pricing | ${siteConfig.name} New Orleans Courier`,
   description: pricingConfig.disclaimer,
   path: "/pricing",
 });
