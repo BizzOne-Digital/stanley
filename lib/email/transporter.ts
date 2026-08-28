@@ -26,7 +26,21 @@ export function getSmtpConfig() {
 
 export function isSmtpConfigured(): boolean {
   const config = getSmtpConfig();
-  return !!(config.host && config.user && config.pass && config.fromEmail);
+  if (!(config.host && config.user && config.pass && config.fromEmail)) {
+    return false;
+  }
+
+  if (isYahooHost(config.host) && config.fromEmail !== config.user) {
+    console.warn(
+      "SMTP_FROM_EMAIL should match SMTP_USER for Yahoo SMTP. Using SMTP_USER as sender."
+    );
+  }
+
+  return true;
+}
+
+function isYahooHost(host: string | undefined): boolean {
+  return Boolean(host?.toLowerCase().includes("yahoo"));
 }
 
 export function createTransporter(): Transporter {

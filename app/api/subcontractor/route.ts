@@ -6,6 +6,7 @@ import {
   isAllowedUpload,
 } from "@/lib/validation/subcontractor";
 import { createTransporter, getSmtpConfig, isSmtpConfigured, sendMail } from "@/lib/email/transporter";
+import { appendReplyToNotice, sendResilientMail } from "@/lib/email/send";
 import {
   subcontractorBusinessEmail,
   subcontractorAcknowledgementEmail,
@@ -201,21 +202,20 @@ export async function POST(request: Request) {
     const config = getSmtpConfig();
     const businessEmail = subcontractorBusinessEmail(data, documents);
     const ackEmail = subcontractorAcknowledgementEmail(data.fullName);
+    const businessBody = appendReplyToNotice(
+      businessEmail.html,
+      businessEmail.text,
+      data.email
+    );
 
-    const transporter = createTransporter();
-    try {
-      await transporter.sendMail({
-        from: `"${config.fromName}" <${config.fromEmail}>`,
-        to: config.contactTo,
-        replyTo: data.email,
-        subject: businessEmail.subject,
-        html: businessEmail.html,
-        text: businessEmail.text,
-        attachments: attachments.length > 0 ? attachments : undefined,
-      });
-    } finally {
-      transporter.close();
-    }
+    await sendResilientMail({
+      to: config.contactTo,
+      replyTo: data.email,
+      subject: businessEmail.subject,
+      html: businessBody.html,
+      text: businessBody.text,
+      attachments: attachments.length > 0 ? attachments : undefined,
+    });
 
     try {
       await sendMail({
@@ -236,9 +236,11 @@ export async function POST(request: Request) {
     const errMsg = error instanceof Error ? error.message : String(error);
     const message = /auth|credentials|invalid login|authentication/i.test(errMsg)
       ? "Email service authentication failed. Please call 504-915-4433."
-      : /timeout|timed out|ETIMEDOUT|ESOCKET/i.test(errMsg)
-        ? "Email service timed out. Please try again or call 504-915-4433."
-        : "Unable to submit your application at this time. Please call 504-915-4433.";
+      : /mailbox unavailable|550|EMESSAGE/i.test(errMsg)
+        ? "Email could not be delivered. Please verify SMTP settings in Vercel or call 504-915-4433."
+        : /timeout|timed out|ETIMEDOUT|ESOCKET/i.test(errMsg)
+          ? "Email service timed out. Please try again or call 504-915-4433."
+          : "Unable to submit your application at this time. Please call 504-915-4433.";
 
     return NextResponse.json({ error: message }, { status: 500 });
   }
