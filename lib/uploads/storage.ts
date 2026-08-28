@@ -1,6 +1,9 @@
+import "server-only";
+
 import { randomBytes } from "crypto";
 import { connectMongo } from "@/lib/mongodb";
-import { StoredUpload, type UploadFolder } from "@/models/StoredUpload";
+import { StoredUpload } from "@/models/StoredUpload";
+import type { UploadFolder } from "@/lib/uploads/constants";
 import { buildUploadUrl, parseUploadUrl } from "@/lib/uploads/urls";
 
 export const IMAGE_MIME_TYPES = [

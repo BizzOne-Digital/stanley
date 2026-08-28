@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { Loader2, Upload, X } from "lucide-react";
 import { toast } from "sonner";
-import { UPLOAD_FOLDERS, type UploadFolder } from "@/models/StoredUpload";
+import { UPLOAD_FOLDERS, type UploadFolder } from "@/lib/uploads/constants";
 import { resolveImageUrl, isManagedUploadUrl } from "@/lib/uploads/resolve";
 import { cn } from "@/lib/utils";
 

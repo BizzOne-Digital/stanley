@@ -1,7 +1,9 @@
-import mongoose, { Schema, type Model } from "mongoose";
+import "server-only";
 
-export const UPLOAD_FOLDERS = ["products", "gallery", "pages", "misc"] as const;
-export type UploadFolder = (typeof UPLOAD_FOLDERS)[number];
+import mongoose, { Schema, type Model } from "mongoose";
+import { UPLOAD_FOLDERS, type UploadFolder } from "@/lib/uploads/constants";
+
+export type { UploadFolder };
 
 export interface StoredUploadDocument {
   folder: UploadFolder;

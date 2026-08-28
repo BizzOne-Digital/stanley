@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Loader2, Lock } from "lucide-react";
 import { toast } from "sonner";
 import { LocalImageField } from "@/components/admin/LocalImageField";
-import type { UploadFolder } from "@/models/StoredUpload";
+import type { UploadFolder } from "@/lib/uploads/constants";
 
 const DEMO_IMAGES: { key: string; label: string; folder: UploadFolder }[] = [
   { key: "hero", label: "Homepage Hero", folder: "pages" },

@@ -1,4 +1,4 @@
-import { UPLOAD_FOLDERS, type UploadFolder } from "@/models/StoredUpload";
+import { UPLOAD_FOLDERS, type UploadFolder } from "@/lib/uploads/constants";
 
 export { UPLOAD_FOLDERS, type UploadFolder };
 
