@@ -69,6 +69,75 @@ export function generateUploadFilename(ext: string): string {
   return `${Date.now()}-${randomBytes(8).toString("hex")}.${ext}`;
 }
 
+export async function saveUploadBuffer(params: {
+  folder: UploadFolder;
+  originalName: string;
+  mimeType: string;
+  buffer: Buffer;
+  allowedMimeTypes: readonly string[];
+  maxSize: number;
+}): Promise<{ url: string; filename: string; size: number; folder: UploadFolder }> {
+  const { folder, originalName, mimeType, buffer, allowedMimeTypes, maxSize } = params;
+
+  if (buffer.length === 0) {
+    throw new Error("File is empty");
+  }
+
+  if (buffer.length > maxSize) {
+    throw new Error(`File exceeds the ${Math.round(maxSize / (1024 * 1024))} MB size limit`);
+  }
+
+  const ext = getExtensionFromName(originalName, mimeType);
+  if (!ext) {
+    throw new Error("Unsupported file type");
+  }
+
+  if (!isAllowedMimeType(mimeType, ext, allowedMimeTypes)) {
+    throw new Error("Unsupported file type");
+  }
+
+  const filename = generateUploadFilename(ext);
+  const resolvedMimeType = mimeType || EXTENSION_MIME[ext] || "application/octet-stream";
+
+  await connectMongo();
+  await StoredUpload.create({
+    folder,
+    filename,
+    mimeType: resolvedMimeType,
+    size: buffer.length,
+    data: buffer,
+  });
+
+  return {
+    url: buildUploadUrl(folder, filename),
+    filename,
+    size: buffer.length,
+    folder,
+  };
+}
+
+function getExtensionFromName(name: string, mimeType: string): string | null {
+  const fromMime = MIME_EXTENSIONS[mimeType];
+  if (fromMime) return fromMime;
+
+  const match = name.toLowerCase().match(/\.([a-z0-9]+)$/);
+  return match?.[1] ?? null;
+}
+
+function isAllowedMimeType(
+  mimeType: string,
+  ext: string,
+  allowedMimeTypes: readonly string[]
+): boolean {
+  if (allowedMimeTypes.includes(mimeType)) return true;
+
+  if (mimeType === "application/octet-stream" || mimeType === "") {
+    return ["pdf", "jpg", "jpeg", "png", "webp", "doc", "docx", "gif"].includes(ext);
+  }
+
+  return false;
+}
+
 export async function saveUpload(params: {
   folder: UploadFolder;
   file: File;
@@ -94,25 +163,16 @@ export async function saveUpload(params: {
     throw new Error("Unsupported file type");
   }
 
-  const filename = generateUploadFilename(ext);
   const buffer = Buffer.from(await file.arrayBuffer());
-  const mimeType = file.type || EXTENSION_MIME[ext] || "application/octet-stream";
 
-  await connectMongo();
-  await StoredUpload.create({
+  return saveUploadBuffer({
     folder,
-    filename,
-    mimeType,
-    size: file.size,
-    data: buffer,
+    originalName: file.name,
+    mimeType: file.type,
+    buffer,
+    allowedMimeTypes,
+    maxSize,
   });
-
-  return {
-    url: buildUploadUrl(folder, filename),
-    filename,
-    size: file.size,
-    folder,
-  };
 }
 
 export async function deleteUploadByUrl(url: string): Promise<boolean> {

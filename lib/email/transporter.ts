@@ -1,18 +1,26 @@
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
 
-let transporter: Transporter | null = null;
+function cleanSecret(value: string | undefined): string | undefined {
+  return value?.trim().replace(/\s+/g, "");
+}
 
 export function getSmtpConfig() {
+  const host = process.env.SMTP_HOST?.trim();
+  const port = parseInt(process.env.SMTP_PORT ?? "587", 10);
+  const secure =
+    process.env.SMTP_SECURE === "true" ||
+    (process.env.SMTP_SECURE !== "false" && port === 465);
+
   return {
-    host: process.env.SMTP_HOST,
-    port: parseInt(process.env.SMTP_PORT ?? "587", 10),
-    secure: process.env.SMTP_SECURE === "true",
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-    fromName: process.env.SMTP_FROM_NAME ?? "Conley Logistics LLC",
-    fromEmail: process.env.SMTP_FROM_EMAIL,
-    contactTo: process.env.CONTACT_TO_EMAIL ?? "sconley9922@yahoo.com",
+    host,
+    port,
+    secure,
+    user: process.env.SMTP_USER?.trim(),
+    pass: cleanSecret(process.env.SMTP_PASS),
+    fromName: process.env.SMTP_FROM_NAME?.trim() ?? "Conley Logistics LLC",
+    fromEmail: process.env.SMTP_FROM_EMAIL?.trim(),
+    contactTo: process.env.CONTACT_TO_EMAIL?.trim() ?? "sconley9922@yahoo.com",
   };
 }
 
@@ -21,26 +29,33 @@ export function isSmtpConfigured(): boolean {
   return !!(config.host && config.user && config.pass && config.fromEmail);
 }
 
-export function getTransporter(): Transporter {
-  if (transporter) return transporter;
-
+export function createTransporter(): Transporter {
   const config = getSmtpConfig();
   if (!config.host || !config.user || !config.pass) {
     throw new Error("SMTP configuration is incomplete");
   }
 
-  transporter = nodemailer.createTransport({
+  return nodemailer.createTransport({
     host: config.host,
     port: config.port,
     secure: config.secure,
     requireTLS: !config.secure && config.port === 587,
     auth: { user: config.user, pass: config.pass },
-    pool: true,
-    maxConnections: 2,
-    connectionTimeout: 20000,
-    greetingTimeout: 20000,
-    socketTimeout: 30000,
+    connectionTimeout: 25000,
+    greetingTimeout: 25000,
+    socketTimeout: 35000,
   });
+}
 
-  return transporter;
+/** @deprecated Use createTransporter() — fresh connections are more reliable on serverless. */
+export function getTransporter(): Transporter {
+  return createTransporter();
+}
+
+export async function sendMail(
+  options: Parameters<Transporter["sendMail"]>[0]
+): Promise<void> {
+  const transporter = createTransporter();
+  await transporter.sendMail(options);
+  transporter.close();
 }

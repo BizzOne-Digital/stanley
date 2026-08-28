@@ -5,7 +5,7 @@ import {
   MAX_FILE_SIZE,
   isAllowedUpload,
 } from "@/lib/validation/subcontractor";
-import { getTransporter, getSmtpConfig, isSmtpConfigured } from "@/lib/email/transporter";
+import { createTransporter, getSmtpConfig, isSmtpConfigured, sendMail } from "@/lib/email/transporter";
 import {
   subcontractorBusinessEmail,
   subcontractorAcknowledgementEmail,
@@ -15,9 +15,8 @@ import { isMongoConfigured } from "@/lib/mongodb";
 import {
   DOCUMENT_MIME_TYPES,
   MAX_DOCUMENT_SIZE,
-  saveUpload,
+  saveUploadBuffer,
 } from "@/lib/uploads/storage";
-import { siteConfig } from "@/data/site";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -30,10 +29,53 @@ const FILE_FIELDS = [
 
 type StoredDocument = { label: string; url: string };
 
+function getSiteUrl(request: Request): string {
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+  if (configured) return configured.replace(/\/$/, "");
+
+  const origin = request.headers.get("origin");
+  if (origin) return origin;
+
+  const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+  const proto = request.headers.get("x-forwarded-proto") ?? "https";
+  if (host) return `${proto}://${host}`;
+
+  return "https://conleydeliverysolutions.com";
+}
+
+async function storeInMongo(
+  file: File,
+  buffer: Buffer,
+  label: string,
+  siteUrl: string
+): Promise<StoredDocument | null> {
+  if (!isMongoConfigured()) return null;
+
+  try {
+    const saved = await saveUploadBuffer({
+      folder: "misc",
+      originalName: file.name,
+      mimeType: file.type,
+      buffer,
+      allowedMimeTypes: DOCUMENT_MIME_TYPES,
+      maxSize: MAX_DOCUMENT_SIZE,
+    });
+
+    return {
+      label,
+      url: `${siteUrl}${saved.url}`,
+    };
+  } catch (error) {
+    console.error(`Mongo upload failed for ${label}:`, error);
+    return null;
+  }
+}
+
 async function processUploadedFile(
   file: File,
-  label: string
-): Promise<{ document?: StoredDocument; attachment?: Attachment; error?: string }> {
+  label: string,
+  siteUrl: string
+): Promise<{ document: StoredDocument; attachment?: Attachment } | { error: string }> {
   if (!isAllowedUpload(file)) {
     return {
       error: `${file.name} has an unsupported file type. Please upload PDF, JPG, PNG, or DOC.`,
@@ -45,35 +87,20 @@ async function processUploadedFile(
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
+  const attachment: Attachment = {
+    filename: file.name,
+    content: buffer,
+    contentType: file.type || undefined,
+  };
 
-  if (isMongoConfigured()) {
-    try {
-      const saved = await saveUpload({
-        folder: "misc",
-        file,
-        allowedMimeTypes: DOCUMENT_MIME_TYPES,
-        maxSize: MAX_DOCUMENT_SIZE,
-      });
-
-      return {
-        document: {
-          label,
-          url: `${siteConfig.url}${saved.url}`,
-        },
-      };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unable to store file";
-      return { error: message };
-    }
+  const mongoDocument = await storeInMongo(file, buffer, label, siteUrl);
+  if (mongoDocument) {
+    return { document: mongoDocument };
   }
 
   return {
-    document: { label, url: file.name },
-    attachment: {
-      filename: file.name,
-      content: buffer,
-      contentType: file.type || undefined,
-    },
+    document: { label, url: `${file.name} (attached to this email)` },
+    attachment,
   };
 }
 
@@ -81,7 +108,8 @@ async function parseFile(
   formData: FormData,
   key: string,
   label: string,
-  required: boolean
+  required: boolean,
+  siteUrl: string
 ): Promise<{ document?: StoredDocument; attachment?: Attachment; error?: string }> {
   const file = formData.get(key);
 
@@ -92,7 +120,7 @@ async function parseFile(
     return {};
   }
 
-  return processUploadedFile(file, label);
+  return processUploadedFile(file, label, siteUrl);
 }
 
 function parseConsent(value: FormDataEntryValue | null): boolean {
@@ -118,6 +146,7 @@ export async function POST(request: Request) {
       );
     }
 
+    const siteUrl = getSiteUrl(request);
     const formData = await request.formData();
 
     const rawData = {
@@ -157,7 +186,7 @@ export async function POST(request: Request) {
     const attachments: Attachment[] = [];
 
     for (const field of FILE_FIELDS) {
-      const result = await parseFile(formData, field.key, field.label, field.required);
+      const result = await parseFile(formData, field.key, field.label, field.required, siteUrl);
       if (result.error) {
         return NextResponse.json({ error: result.error }, { status: 400 });
       }
@@ -170,22 +199,26 @@ export async function POST(request: Request) {
     }
 
     const config = getSmtpConfig();
-    const transporter = getTransporter();
     const businessEmail = subcontractorBusinessEmail(data, documents);
     const ackEmail = subcontractorAcknowledgementEmail(data.fullName);
 
-    await transporter.sendMail({
-      from: `"${config.fromName}" <${config.fromEmail}>`,
-      to: config.contactTo,
-      replyTo: data.email,
-      subject: businessEmail.subject,
-      html: businessEmail.html,
-      text: businessEmail.text,
-      attachments: attachments.length > 0 ? attachments : undefined,
-    });
-
+    const transporter = createTransporter();
     try {
       await transporter.sendMail({
+        from: `"${config.fromName}" <${config.fromEmail}>`,
+        to: config.contactTo,
+        replyTo: data.email,
+        subject: businessEmail.subject,
+        html: businessEmail.html,
+        text: businessEmail.text,
+        attachments: attachments.length > 0 ? attachments : undefined,
+      });
+    } finally {
+      transporter.close();
+    }
+
+    try {
+      await sendMail({
         from: `"${config.fromName}" <${config.fromEmail}>`,
         to: data.email,
         subject: ackEmail.subject,
@@ -200,9 +233,11 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Subcontractor submission error:", error);
 
-    const message =
-      error instanceof Error && /auth|credentials|invalid login/i.test(error.message)
-        ? "Email service authentication failed. Please call 504-915-4433."
+    const errMsg = error instanceof Error ? error.message : String(error);
+    const message = /auth|credentials|invalid login|authentication/i.test(errMsg)
+      ? "Email service authentication failed. Please call 504-915-4433."
+      : /timeout|timed out|ETIMEDOUT|ESOCKET/i.test(errMsg)
+        ? "Email service timed out. Please try again or call 504-915-4433."
         : "Unable to submit your application at this time. Please call 504-915-4433.";
 
     return NextResponse.json({ error: message }, { status: 500 });

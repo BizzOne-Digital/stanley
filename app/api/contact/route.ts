@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { contactFormSchema } from "@/lib/validation/contact";
-import { getTransporter, getSmtpConfig, isSmtpConfigured } from "@/lib/email/transporter";
+import { getSmtpConfig, isSmtpConfigured, sendMail } from "@/lib/email/transporter";
 import { contactBusinessEmail, customerAcknowledgementEmail } from "@/lib/email/templates";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
@@ -39,11 +39,10 @@ export async function POST(request: Request) {
     }
 
     const config = getSmtpConfig();
-    const transporter = getTransporter();
     const businessEmail = contactBusinessEmail(data);
     const ackEmail = customerAcknowledgementEmail(data.fullName);
 
-    await transporter.sendMail({
+    await sendMail({
       from: `"${config.fromName}" <${config.fromEmail}>`,
       to: config.contactTo,
       replyTo: data.email,
@@ -52,7 +51,7 @@ export async function POST(request: Request) {
       text: businessEmail.text,
     });
 
-    await transporter.sendMail({
+    await sendMail({
       from: `"${config.fromName}" <${config.fromEmail}>`,
       to: data.email,
       subject: ackEmail.subject,
