@@ -41,8 +41,13 @@ export function Header() {
             : "border-gold/10 bg-black/90 backdrop-blur-sm",
         )}
       >
-        <div className="mx-auto grid h-16 min-w-0 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-2 px-4 sm:gap-4 lg:h-[4.5rem] lg:px-8">
-          <LogoLockup size="sm" showText={false} priority />
+        <div className="mx-auto grid h-[4.25rem] min-w-0 max-w-7xl grid-cols-[auto_1fr_auto] items-center gap-2 px-4 sm:gap-4 lg:h-20 lg:px-8">
+          <LogoLockup
+            size="md"
+            showText={false}
+            priority
+            imageClassName="h-14 w-14 lg:h-16 lg:w-16"
+          />
 
           <nav
             className="hidden min-w-0 items-center justify-center gap-0.5 xl:flex"

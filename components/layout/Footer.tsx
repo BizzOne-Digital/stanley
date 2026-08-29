@@ -56,7 +56,7 @@ export function Footer({ className }: FooterProps) {
       <div className="mx-auto min-w-0 max-w-7xl px-4 py-10 lg:px-8 lg:py-12">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
           <div className="space-y-5 sm:col-span-2 lg:col-span-4">
-            <LogoLockup size="sm" />
+            <LogoLockup size="md" imageClassName="h-14 w-14 sm:h-16 sm:w-16" />
             <p className="max-w-sm leading-relaxed text-ivory/75">
               {siteConfig.description}
             </p>
