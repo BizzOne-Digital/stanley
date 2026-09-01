@@ -54,14 +54,24 @@ export function Footer({ className }: FooterProps) {
       )}
     >
       <div className="mx-auto min-w-0 max-w-7xl px-4 py-10 lg:px-8 lg:py-12">
-        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+        <div className="border-b border-gold/15 pb-10 lg:pb-12">
+          <div className="flex flex-col items-center text-center">
+            <LogoLockup
+              size="md"
+              showText={false}
+              className="justify-center"
+              imageClassName="h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28"
+            />
+            <p className="mt-4 max-w-2xl font-display text-xs uppercase tracking-[0.25em] text-gold/80">
+              {siteConfig.tagline}
+            </p>
+          </div>
+        </div>
+
+        <div className="grid gap-10 pt-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8 lg:pt-12">
           <div className="space-y-5 sm:col-span-2 lg:col-span-4">
-            <LogoLockup size="md" imageClassName="h-14 w-14 sm:h-16 sm:w-16" />
             <p className="max-w-sm leading-relaxed text-ivory/75">
               {siteConfig.description}
-            </p>
-            <p className="font-display text-xs uppercase tracking-[0.2em] text-gold/80">
-              {siteConfig.tagline}
             </p>
             <div className="flex flex-wrap gap-3 pt-1">
               <Button asChild variant="primary" size="sm">
@@ -75,7 +85,7 @@ export function Footer({ className }: FooterProps) {
           </div>
 
           <FooterColumn title="Navigation" className="lg:col-span-2">
-            <ul className="space-y-2.5">
+            <ul className="grid grid-cols-1 gap-x-4 gap-y-2.5 sm:grid-cols-2 lg:grid-cols-1">
               {footerNav.map((item) => (
                 <li key={item.href}>
                   <Link
@@ -86,7 +96,7 @@ export function Footer({ className }: FooterProps) {
                   </Link>
                 </li>
               ))}
-              <li>
+              <li className="sm:col-span-2 lg:col-span-1">
                 <Link
                   href="/request-a-quote"
                   className="inline-flex items-center gap-1.5 font-medium text-gold transition-colors hover:text-gold-bright"
