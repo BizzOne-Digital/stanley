@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Phone } from "lucide-react";
 import { siteConfig } from "@/data/site";
+import { LogoLockup } from "@/components/layout/LogoLockup";
 import { SplitText } from "@/components/motion/SplitText";
 import { Button } from "@/components/ui/Button";
 
@@ -10,8 +11,16 @@ export function HomeHero() {
   return (
     <section className="relative min-h-[90vh] overflow-hidden bg-black">
       <div className="absolute inset-0 bg-gradient-to-b from-graphite/40 via-black to-black" aria-hidden="true" />
-      <div className="relative mx-auto flex min-h-[90vh] max-w-7xl flex-col items-center justify-center px-4 py-20 lg:px-8">
-        <div className="max-w-3xl text-center lg:text-left">
+      <div className="relative mx-auto flex min-h-[90vh] max-w-7xl flex-col items-center px-4 pb-20 pt-8 sm:pt-10 lg:items-start lg:px-8 lg:pt-12">
+        <LogoLockup
+          size="lg"
+          showText={false}
+          priority
+          className="mx-auto lg:mx-0"
+          imageClassName="h-36 w-36 sm:h-44 sm:w-44 md:h-52 md:w-52 lg:h-60 lg:w-60 xl:h-64 xl:w-64"
+        />
+
+        <div className="mt-8 max-w-3xl text-center sm:mt-10 lg:mt-12 lg:text-left">
           <SplitText
             as="h1"
             text={siteConfig.headline}
