@@ -9,32 +9,42 @@ import { LogoLockup } from "@/components/layout/LogoLockup";
 import { MobileMenu } from "@/components/layout/MobileMenu";
 import { cn } from "@/lib/utils";
 
-const navLinks = navigation.filter((item) => item.href !== "/request-a-quote");
+const leftNavLinks = navigation.filter((item) =>
+  ["/", "/about", "/services", "/pricing"].includes(item.href),
+);
+const rightNavLinks = navigation.filter((item) =>
+  ["/subcontractors", "/contact"].includes(item.href),
+);
 
 function NavLink({
-  item,
+  href,
+  label,
   pathname,
+  compact = false,
 }: {
-  item: (typeof navLinks)[number];
+  href: string;
+  label: string;
   pathname: string;
+  compact?: boolean;
 }) {
   const isActive =
-    item.href === "/"
-      ? pathname === "/"
-      : pathname.startsWith(item.href);
+    href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
     <Link
-      href={item.href}
+      href={href}
       className={cn(
-        "relative whitespace-nowrap px-3 py-2 font-display text-xs font-medium uppercase tracking-[0.14em] transition-colors lg:px-4 lg:text-[13px]",
+        "relative whitespace-nowrap font-display font-medium uppercase tracking-[0.12em] transition-colors",
+        compact
+          ? "px-2 py-2 text-[11px] lg:px-2.5 lg:text-xs xl:px-3 xl:text-[13px]"
+          : "px-3 py-2 text-xs lg:text-[13px]",
         isActive
-          ? "text-gold-bright after:absolute after:inset-x-3 after:bottom-0 after:h-0.5 after:bg-gold-bright lg:after:inset-x-4"
-          : "text-ivory/70 hover:text-gold",
+          ? "text-gold-bright after:absolute after:inset-x-2 after:bottom-1 after:h-0.5 after:bg-gold-bright xl:after:inset-x-3"
+          : "text-ivory/75 hover:text-gold",
       )}
       aria-current={isActive ? "page" : undefined}
     >
-      {item.label}
+      {label}
     </Link>
   );
 }
@@ -76,42 +86,50 @@ export function Header() {
           aria-hidden="true"
         />
 
-        <div className="mx-auto min-w-0 max-w-7xl px-4 lg:px-8">
-          <div className="grid grid-cols-[2.5rem_1fr_2.5rem] items-center py-3 sm:grid-cols-[3rem_1fr_3rem] sm:py-4 xl:grid-cols-1 xl:py-5">
-            <div className="xl:hidden" aria-hidden="true" />
-
-            <LogoLockup
-              size="md"
-              showText={false}
-              priority
-              className="justify-self-center xl:justify-self-center"
-              imageClassName="h-20 w-20 sm:h-24 sm:w-24 xl:h-28 xl:w-28"
-            />
-
-            <button
-              type="button"
-              className="inline-flex size-10 items-center justify-center justify-self-end rounded-sm border border-graphite text-ivory transition-colors hover:border-gold hover:text-gold xl:hidden"
-              onClick={() => setMenuOpen(true)}
-              aria-expanded={menuOpen}
-              aria-controls="mobile-menu"
-              aria-label="Open menu"
-            >
-              <Menu className="size-5" aria-hidden="true" />
-            </button>
-          </div>
-
+        {/* Desktop: single-line nav | logo | nav + CTA */}
+        <div className="relative mx-auto hidden min-h-[5.5rem] min-w-0 max-w-7xl items-center px-4 lg:flex lg:min-h-[6.25rem] lg:px-6 xl:px-8">
           <nav
-            className="hidden items-center justify-center gap-0.5 border-t border-gold/10 py-2.5 xl:flex"
-            aria-label="Primary navigation"
+            className="flex min-w-0 flex-1 items-center justify-end gap-0.5 pr-28 lg:pr-32 xl:gap-1 xl:pr-36"
+            aria-label="Primary navigation — left"
           >
-            {navLinks.map((item) => (
-              <NavLink key={item.href} item={item} pathname={pathname} />
+            {leftNavLinks.map((item) => (
+              <NavLink
+                key={item.href}
+                href={item.href}
+                label={item.label}
+                pathname={pathname}
+                compact
+              />
             ))}
-            <span className="mx-2 h-4 w-px bg-gold/25" aria-hidden="true" />
+          </nav>
+
+          <LogoLockup
+            size="md"
+            showText={false}
+            priority
+            className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
+            imageClassName="h-20 w-20 lg:h-24 lg:w-24 xl:h-28 xl:w-28"
+          />
+
+          <div className="flex min-w-0 flex-1 items-center justify-start gap-0.5 pl-28 lg:pl-32 xl:gap-1 xl:pl-36">
+            <nav
+              className="flex items-center gap-0.5 xl:gap-1"
+              aria-label="Primary navigation — right"
+            >
+              {rightNavLinks.map((item) => (
+                <NavLink
+                  key={item.href}
+                  href={item.href}
+                  label={item.label}
+                  pathname={pathname}
+                  compact
+                />
+              ))}
+            </nav>
             <Link
               href="/request-a-quote"
               className={cn(
-                "whitespace-nowrap rounded-sm bg-gold px-4 py-2 font-display text-xs font-semibold uppercase tracking-[0.14em] text-black transition-colors hover:bg-gold-bright lg:text-[13px]",
+                "ml-1 shrink-0 whitespace-nowrap rounded-sm bg-gold px-3 py-2 font-display text-[11px] font-semibold uppercase tracking-[0.12em] text-black transition-colors hover:bg-gold-bright lg:ml-2 lg:px-4 lg:text-xs xl:text-[13px]",
                 pathname.startsWith("/request-a-quote") &&
                   "ring-2 ring-gold-bright ring-offset-2 ring-offset-black",
               )}
@@ -121,7 +139,29 @@ export function Header() {
             >
               Get a Quote
             </Link>
-          </nav>
+          </div>
+        </div>
+
+        {/* Mobile: centered logo + menu */}
+        <div className="mx-auto grid min-h-[4.75rem] min-w-0 max-w-7xl grid-cols-[2.5rem_1fr_2.5rem] items-center px-4 sm:min-h-20 lg:hidden">
+          <div aria-hidden="true" />
+          <LogoLockup
+            size="md"
+            showText={false}
+            priority
+            className="justify-self-center"
+            imageClassName="h-[4.5rem] w-[4.5rem] sm:h-20 sm:w-20"
+          />
+          <button
+            type="button"
+            className="inline-flex size-10 items-center justify-center justify-self-end rounded-sm border border-graphite text-ivory transition-colors hover:border-gold hover:text-gold"
+            onClick={() => setMenuOpen(true)}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            aria-label="Open menu"
+          >
+            <Menu className="size-5" aria-hidden="true" />
+          </button>
         </div>
       </header>
 
