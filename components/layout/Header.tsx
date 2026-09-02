@@ -190,7 +190,7 @@ export function Header() {
                 size="md"
                 showText={false}
                 className="absolute left-1/2 top-1/2 z-10 -translate-x-1/2 -translate-y-1/2"
-                imageClassName="h-20 w-20 lg:h-24 lg:w-24 xl:h-28 xl:w-28"
+                imageClassName="h-12 w-auto max-w-[10rem] lg:h-14 lg:max-w-[12rem] xl:h-16 xl:max-w-[14rem]"
               />
 
               <div className="flex min-w-0 flex-1 items-center justify-start gap-0.5 pl-32 lg:pl-36 xl:gap-1 xl:pl-40">
@@ -230,7 +230,7 @@ export function Header() {
                 size="md"
                 showText={false}
                 className="justify-self-center"
-                imageClassName="h-[4.5rem] w-[4.5rem] sm:h-20 sm:w-20"
+                imageClassName="h-10 w-auto max-w-[8.5rem] sm:h-12 sm:max-w-[10rem]"
               />
               <button
                 type="button"

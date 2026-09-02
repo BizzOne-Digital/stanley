@@ -16,9 +16,13 @@ export type LogoLockupProps = {
 };
 
 const sizeMap = {
-  sm: { px: 44, className: "h-11 w-11", text: "text-sm" },
-  md: { px: 56, className: "h-14 w-14", text: "text-base" },
-  lg: { px: 160, className: "h-32 w-32 sm:h-40 sm:w-40 md:h-48 md:w-48", text: "text-lg" },
+  sm: { className: "h-10 w-auto max-w-[9.5rem]", text: "text-sm" },
+  md: { className: "h-14 w-auto max-w-[12rem]", text: "text-base" },
+  lg: {
+    className:
+      "h-28 w-auto max-w-[min(100%,20rem)] sm:h-36 sm:max-w-[24rem] md:h-44 md:max-w-[28rem] lg:h-52 lg:max-w-[32rem]",
+    text: "text-lg",
+  },
 } as const;
 
 export function LogoLockup({
@@ -42,26 +46,25 @@ export function LogoLockup({
         <Image
           src={siteConfig.logo.src}
           alt={siteConfig.logo.alt}
-          width={sizes.px}
-          height={sizes.px}
+          width={siteConfig.logo.width}
+          height={siteConfig.logo.height}
           priority={priority}
           onError={() => setImageError(true)}
           className={cn(
             sizes.className,
-            "shrink-0 object-contain transition-transform duration-300 group-hover:scale-105",
+            "shrink-0 object-contain transition-transform duration-300 group-hover:scale-[1.02]",
             imageClassName,
           )}
         />
       ) : (
         <span
           className={cn(
-            "flex shrink-0 items-center justify-center rounded-sm border border-gold/40 bg-carbon font-display text-xs font-bold uppercase tracking-wider text-gold",
-            sizes.className,
+            "flex shrink-0 items-center justify-center rounded-sm border border-gold/40 bg-carbon px-3 py-2 font-display text-xs font-bold uppercase tracking-wider text-gold",
             imageClassName,
           )}
           aria-hidden="true"
         >
-          CL
+          Conley
         </span>
       )}
       {showText ? (

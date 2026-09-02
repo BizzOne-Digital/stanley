@@ -60,7 +60,7 @@ export function Footer({ className }: FooterProps) {
               size="md"
               showText={false}
               className="justify-center"
-              imageClassName="h-20 w-20 sm:h-24 sm:w-24 lg:h-28 lg:w-28"
+              imageClassName="h-16 w-auto max-w-[14rem] sm:h-20 sm:max-w-[18rem] lg:h-24 lg:max-w-[22rem]"
             />
             <p className="mt-4 max-w-2xl font-display text-xs uppercase tracking-[0.25em] text-gold/80">
               {siteConfig.tagline}

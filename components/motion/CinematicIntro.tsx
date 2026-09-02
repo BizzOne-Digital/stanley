@@ -253,7 +253,7 @@ function DesktopIntro() {
             alt={siteConfig.logo.alt}
             width={siteConfig.logo.width}
             height={siteConfig.logo.height}
-            className="relative h-32 w-32 object-contain sm:h-44 sm:w-44"
+            className="relative h-auto w-auto max-h-32 max-w-[min(100%,18rem)] object-contain sm:max-h-40 sm:max-w-[22rem]"
             priority
           />
         </div>
@@ -293,7 +293,7 @@ function MobileIntro() {
           alt={siteConfig.logo.alt}
           width={siteConfig.logo.width}
           height={siteConfig.logo.height}
-          className="h-24 w-24 object-contain"
+          className="h-auto w-auto max-h-24 max-w-[min(100%,14rem)] object-contain"
           priority
         />
       </motion.div>

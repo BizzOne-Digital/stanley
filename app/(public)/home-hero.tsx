@@ -17,7 +17,7 @@ export function HomeHero() {
           showText={false}
           priority
           className="mx-auto lg:mx-0"
-          imageClassName="h-36 w-36 sm:h-44 sm:w-44 md:h-52 md:w-52 lg:h-60 lg:w-60 xl:h-64 xl:w-64"
+          imageClassName="h-40 w-auto max-w-[min(100%,22rem)] sm:h-48 sm:max-w-[26rem] md:h-56 md:max-w-[30rem] lg:h-64 lg:max-w-[34rem] xl:h-72 xl:max-w-[38rem]"
         />
 
         <div className="mt-8 max-w-3xl text-center sm:mt-10 lg:mt-12 lg:text-left">

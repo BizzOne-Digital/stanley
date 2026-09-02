@@ -29,7 +29,7 @@ export function createPageMetadata({
       type: "website",
       images: siteConfig.ogImageHook
         ? [{ url: siteConfig.ogImageHook, width: 1200, height: 630, alt: siteConfig.name }]
-        : [{ url: siteConfig.logo.src, width: 800, height: 800, alt: siteConfig.logo.alt }],
+        : [{ url: siteConfig.logo.src, width: siteConfig.logo.width, height: siteConfig.logo.height, alt: siteConfig.logo.alt }],
     },
     twitter: {
       card: "summary_large_image",
