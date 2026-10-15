@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" fill="none">
+  <rect width="800" height="400" fill="#050505"/>
+  <path d="M80 280 L720 280 L720 248 Q720 210 678 210 L598 210 L556 148 L244 148 L200 210 L80 210 Z" fill="#1A1A1A" stroke="#D4A62A" stroke-width="2"/>
+  <rect x="260" y="168" width="130" height="72" fill="#101010" stroke="#D4A62A" stroke-width="1" opacity="0.5"/>
+  <rect x="420" y="168" width="110" height="72" fill="#101010" stroke="#D4A62A" stroke-width="1" opacity="0.5"/>
+  <circle cx="210" cy="280" r="32" fill="#1A1A1A" stroke="#D4A62A" stroke-width="2"/>
+  <circle cx="210" cy="280" r="12" fill="#D4A62A" opacity="0.35"/>
+  <circle cx="590" cy="280" r="32" fill="#1A1A1A" stroke="#D4A62A" stroke-width="2"/>
+  <circle cx="590" cy="280" r="12" fill="#D4A62A" opacity="0.35"/>
+  <line x1="80" y1="310" x2="720" y2="310" stroke="#D4A62A" stroke-width="1" opacity="0.25"/>
+  <text x="400" y="368" text-anchor="middle" fill="#8E681B" font-size="14" font-family="Arial, sans-serif">Service Illustration — Delivery Van</text>
+</svg>
